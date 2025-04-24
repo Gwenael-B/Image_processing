@@ -19,6 +19,7 @@ int main(void) {
     if (choix == 1) {
         printf("\nChemin du fichier : ");
         scanf("%s", chemin);
+        bmp8_loadImage(chemin);
         printf("Image chargée avec succès !\n");
         goto choix;
     }
@@ -39,16 +40,16 @@ int main(void) {
         }
         printf(">>> Votre choix : %d", choix);
         if (choix == 1) {
-            bmp8_negative(t_bmp8 * img);
+
         }
         if (choix == 2) {
             int value;
             printf("Veuillez choisir une valeur : ");
             scanf("%d", &value);
-            bmp8_brightness(t_bmp8 * img, value);
+
         }
         if (choix == 3) {
-            bmp8_threshold(t_bmp8 * img, 128);
+
         }
         if (choix == 4){}
         if (choix == 5){}
@@ -57,9 +58,7 @@ int main(void) {
         goto choix;
     }
     if (choix == 4) {
-        bmp8_printInfo(t_bmp8 * img);
+
         goto choix;
     }
-
-    return 0;
 }
