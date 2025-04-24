@@ -1,7 +1,7 @@
 #include "bmp8.h"
 #include <stdio.h>
 #include <stdlib.h>
-
+//
 int main(void) {
     t_bmp8 img;
     int choix;
