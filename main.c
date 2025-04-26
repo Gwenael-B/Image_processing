@@ -1,9 +1,9 @@
 #include "bmp8.h"
 #include <stdio.h>
 #include <stdlib.h>
-//
+
 int main(void) {
-    t_bmp8 img;
+    t_bmp8 * img = NULL;
     int choix;
     choix:
     printf("Veuillez choisir une option :\n  1. Ouvrir une image\n  2. Sauvegarder une image\n  3. Appliquer un filtre\n  4. Afficher les informationds de l'image\n  5. Quitter\n");
@@ -19,14 +19,13 @@ int main(void) {
     if (choix == 1) {
         printf("\nChemin du fichier : ");
         scanf("%s", chemin);
-        bmp8_loadImage(chemin);
-        printf("Image chargée avec succès !\n");
+        img = bmp8_loadImage(chemin);
         goto choix;
     }
     if (choix == 2) {
         printf("\nChemin du fichier : ");
         scanf("%s", chemin);
-        printf("Image sauvegardée avec succès !");
+        bmp8_saveImage(chemin, img);
         goto choix;
     }
     if (choix == 3) {
@@ -40,16 +39,19 @@ int main(void) {
         }
         printf(">>> Votre choix : %d", choix);
         if (choix == 1) {
-
+            bmp8_negative(img);
         }
         if (choix == 2) {
             int value;
             printf("Veuillez choisir une valeur : ");
             scanf("%d", &value);
-
+            bmp8_brightness(img, value);
         }
         if (choix == 3) {
-
+            int threshold;
+            printf("Veuillez choisir une valeur : ");
+            scanf("%d", &threshold);
+            bmp8_threshold(img, threshold);
         }
         if (choix == 4){}
         if (choix == 5){}
@@ -58,7 +60,7 @@ int main(void) {
         goto choix;
     }
     if (choix == 4) {
-
+        bmp8_printInfo(img);
         goto choix;
     }
 }
