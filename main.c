@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 int main(void) {
-    t_bmp8 img;
+    t_bmp8 * img;
     int choix;
     choix:
     printf("Veuillez choisir une option :\n  1. Ouvrir une image\n  2. Sauvegarder une image\n  3. Appliquer un filtre\n  4. Afficher les informationds de l'image\n  5. Quitter\n");
@@ -39,16 +39,16 @@ int main(void) {
         }
         printf(">>> Votre choix : %d", choix);
         if (choix == 1) {
-            bmp8_negative(t_bmp8 * img);
+            bmp8_negative(img);
         }
         if (choix == 2) {
             int value;
             printf("Veuillez choisir une valeur : ");
             scanf("%d", &value);
-            bmp8_brightness(t_bmp8 * img, value);
+            bmp8_brightness(img, value);
         }
         if (choix == 3) {
-            bmp8_threshold(t_bmp8 * img, 128);
+            bmp8_threshold(img, 128);
         }
         if (choix == 4){}
         if (choix == 5){}
@@ -57,7 +57,7 @@ int main(void) {
         goto choix;
     }
     if (choix == 4) {
-        bmp8_printInfo(t_bmp8 * img);
+        bmp8_printInfo(img);
         goto choix;
     }
 

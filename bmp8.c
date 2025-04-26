@@ -4,7 +4,7 @@
 
 //La fonction charge l'image d'extension bmp 8 bits
 t_bmp8 * bmp8_loadImage(const char * filename){
-  FILE *file = fopen(filename, "rb");//Lit en binaire
+  FILE *file = fopen(filename, "r");//Lit en binaire
   if(!file){
     printf("Erreur, l'image sélectionnée n'est pas correcte.\n");
     return NULL;
@@ -48,7 +48,7 @@ t_bmp8 * bmp8_loadImage(const char * filename){
 
   //Lecture des données de l'image
   fread(img->data, sizeof(unsigned char), img->dataSize, file);
-
+  printf("Image chargée avec succès !");
   //Ferme le fichier et retourne l'image
   fclose(file);
   return img;
@@ -97,7 +97,8 @@ void bmp8_printInfo(t_bmp8 * img){
 
 //La fonction change l'image en négatif : echange les couleurs
 void bmp8_negative(t_bmp8 * img) {
-  if (!img || !img->data) return;
+  if (!img || !img->data)
+    return;
 
   for (unsigned int i = 0; i < img->dataSize; i++) {
     img->data[i] = 255 - img->data[i];
@@ -106,14 +107,17 @@ void bmp8_negative(t_bmp8 * img) {
 
 //La fonction change la luminosité l'image
 void bmp8_brightness(t_bmp8 * img, int value) {
-  if (!img || !img->data) return;
+  if (!img || !img->data)
+    return;
 
   for (unsigned int i = 0; i < img->dataSize; i++) {
     int pixel = img->data[i] + value;
 
     // Clamping (forcage dans [0, 255])
-    if (pixel > 255) pixel = 255;
-    if (pixel < 0) pixel = 0;
+    if (pixel > 255)
+      pixel = 255;
+    if (pixel < 0)
+      pixel = 0;
 
     img->data[i] = (unsigned char)pixel;
   }
@@ -121,7 +125,8 @@ void bmp8_brightness(t_bmp8 * img, int value) {
 
 //La fonction transforme l'image en binaire, que deux couleurs 0 ou 255
 void bmp8_threshold(t_bmp8 * img, int threshold) {
-  if (!img || !img->data) return;
+  if (!img || !img->data)
+    return;
 
   for (unsigned int i = 0; i < img->dataSize; i++) {
     img->data[i] = (img->data[i] >= threshold) ? 255 : 0;
