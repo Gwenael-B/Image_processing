@@ -100,22 +100,22 @@ void bmp8_printInfo(t_bmp8 * img){
 }
 
 //La fonction change l'image en négatif : echange les couleurs
-void bmp8_negative(t_bmp8 * img) {
-  if (!img || !img->data) {
+void bmp8_negative(t_bmp8 * img){
+  if (!img || !img->data){
     printf(" L'image est vide, impossible de faire son negatif.\n");
     return;
   }
-  for (unsigned int i = 0; i < img->dataSize; i++) {
+  for (unsigned int i = 0; i < img->dataSize; i++){
     img->data[i] = 255 - img->data[i];
   }
 }
 
 //La fonction change la luminosité l'image
-void bmp8_brightness(t_bmp8 * img, int value) {
+void bmp8_brightness(t_bmp8 * img, int value){
   if (!img || !img->data)
     return;
 
-  for (unsigned int i = 0; i < img->dataSize; i++) {
+  for (unsigned int i = 0; i < img->dataSize; i++){
     int pixel = img->data[i] + value;
 
     // Clamping (forcage dans [0, 255])
@@ -129,11 +129,11 @@ void bmp8_brightness(t_bmp8 * img, int value) {
 }
 
 //La fonction transforme l'image en binaire, que deux couleurs 0 ou 255
-void bmp8_threshold(t_bmp8 * img, int threshold) {
+void bmp8_threshold(t_bmp8 * img, int threshold){
   if (!img || !img->data)
     return;
 
-  for (unsigned int i = 0; i < img->dataSize; i++) {
+  for (unsigned int i = 0; i < img->dataSize; i++){
     img->data[i] = (img->data[i] >= threshold) ? 255 : 0;
   }
 }
