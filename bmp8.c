@@ -4,7 +4,7 @@
 
 //La fonction charge l'image d'extension bmp 8 bits
 t_bmp8 * bmp8_loadImage(const char * filename){
-  FILE *file = fopen(filename, "r");//Lit en binaire
+  FILE *file = fopen(filename, "r");
   if(!file){
     printf("Erreur, l'image sélectionnée n'est pas correcte.\n");
     return NULL;
@@ -12,7 +12,7 @@ t_bmp8 * bmp8_loadImage(const char * filename){
 
   t_bmp8 *img = (t_bmp8 *)malloc(sizeof(t_bmp8));
 
-  if (!img){
+  if (img==NULL){
     printf("Erreur (Pas assez de mémoire pour l'image.)\n");
     fclose(file);
     return NULL;
@@ -25,11 +25,11 @@ t_bmp8 * bmp8_loadImage(const char * filename){
   fread(img->colorTable, sizeof(unsigned char), 1024, file);
 
   //Extraire informations du header
+  img->offset = *(unsigned int*)&img->header[10];
   img->width = *(unsigned int*)&img->header[18];
   img->height = *(unsigned int*)&img->header[22];
   img->colorDepth = *(unsigned int*)&img->header[28];
-  img->dataSize = *(unsigned int*)&img->header[34];
-
+  img->dataSize = img->width * img->height; //  *(unsigned int*)&img->header[34];
   // Vérifie bien image 8 bits
   if (img->colorDepth != 8) {
     printf("Erreur,pas image en 8 bits.\n");
@@ -47,8 +47,12 @@ t_bmp8 * bmp8_loadImage(const char * filename){
   }
 
   //Lecture des données de l'image
-  fread(img->data, sizeof(unsigned char), img->dataSize, file);
-  printf("Image chargée avec succès !");
+  fseek(file, img->offset, SEEK_SET);
+  long blocs = fread(img->data, sizeof(unsigned char), img->dataSize, file);
+//printf("blocs lus : %d\n",blocs );
+//printf("image data : %s\n",img->data );
+
+  printf("Image %s chargée avec succès !\n",filename);
   //Ferme le fichier et retourne l'image
   fclose(file);
   return img;
@@ -58,7 +62,7 @@ t_bmp8 * bmp8_loadImage(const char * filename){
 void bmp8_saveImage(const char * filename, t_bmp8 * img) {
   FILE *file = fopen(filename, "wb");//Ecrit en binaire
   if (!file) {
-    printf("Erreur, création du fichier impossible %s\n", filename);
+    printf("Erreur, création du fichier %s impossible.\n", filename);
     return;
   }
 
@@ -70,6 +74,7 @@ void bmp8_saveImage(const char * filename, t_bmp8 * img) {
 
   //Ecrit les données de l'image
   fwrite(img->data, sizeof(unsigned char), img->dataSize, file);
+  printf("Image  %s sauvegardée avec succès !",filename);
 
   //Ferme le fichier
   fclose(file);
@@ -91,15 +96,15 @@ void bmp8_printInfo(t_bmp8 * img){
     printf("Erreur: Image invalide.\n");
     return;
   }
-  printf("Image info :");
-  printf("\n  Width : %d\n  Height : %d\n  Color Depth : %d\n  Date Size : %d", img->width, img->height, img->colorDepth, img->dataSize);
+  printf("\nImage info :\n    Width : %d\n    Height : %d\n    Color Depth : %d\n    Date Size : %d\n", img->width, img->height, img->colorDepth, img->dataSize);
 }
 
 //La fonction change l'image en négatif : echange les couleurs
 void bmp8_negative(t_bmp8 * img) {
-  if (!img || !img->data)
+  if (!img || !img->data) {
+    printf(" L'image est vide, impossible de faire son negatif.\n");
     return;
-
+  }
   for (unsigned int i = 0; i < img->dataSize; i++) {
     img->data[i] = 255 - img->data[i];
   }
