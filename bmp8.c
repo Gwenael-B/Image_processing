@@ -137,3 +137,9 @@ void bmp8_threshold(t_bmp8 * img, int threshold){
     img->data[i] = (img->data[i] >= threshold) ? 255 : 0;
   }
 }
+
+void bmp8_applyFilter(t_bmp8 * img, float ** kernel, int kernelSize) {
+  if (!img || !img->data) {
+    return;
+  }
+}
