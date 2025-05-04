@@ -4,7 +4,7 @@
 
 //La fonction charge l'image d'extension bmp 8 bits
 t_bmp8 * bmp8_loadImage(const char * filename){
-  FILE *file = fopen(filename, "r");
+  FILE *file = fopen(filename, "rb");
   if(!file){
     printf("Erreur, l'image sélectionnée n'est pas correcte.\n");
     return NULL;
