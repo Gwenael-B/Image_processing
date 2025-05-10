@@ -7,7 +7,6 @@ typedef struct {
     unsigned int height;
     unsigned int colorDepth;
     unsigned int dataSize;
-    unsigned char ** pixels;
 } t_bmp8;
 
 t_bmp8 * bmp8_loadImage(const char * filename);

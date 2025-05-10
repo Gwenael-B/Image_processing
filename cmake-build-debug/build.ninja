@@ -56,6 +56,13 @@ build CMakeFiles/Image_processing.dir/bmp8.c.obj: C_COMPILER__Image_processing_u
   OBJECT_DIR = CMakeFiles\Image_processing.dir
   OBJECT_FILE_DIR = CMakeFiles\Image_processing.dir
 
+build CMakeFiles/Image_processing.dir/t_bmp24.c.obj: C_COMPILER__Image_processing_unscanned_Debug C$:/projects/langage_c/Image_processing/t_bmp24.c || cmake_object_order_depends_target_Image_processing
+  DEP_FILE = CMakeFiles\Image_processing.dir\t_bmp24.c.obj.d
+  FLAGS = -g -std=gnu11 -fdiagnostics-color=always
+  INCLUDES = -IC:/projects/langage_c/Image_processing/.
+  OBJECT_DIR = CMakeFiles\Image_processing.dir
+  OBJECT_FILE_DIR = CMakeFiles\Image_processing.dir
+
 build CMakeFiles/Image_processing.dir/main.c.obj: C_COMPILER__Image_processing_unscanned_Debug C$:/projects/langage_c/Image_processing/main.c || cmake_object_order_depends_target_Image_processing
   DEP_FILE = CMakeFiles\Image_processing.dir\main.c.obj.d
   FLAGS = -g -std=gnu11 -fdiagnostics-color=always
@@ -71,7 +78,7 @@ build CMakeFiles/Image_processing.dir/main.c.obj: C_COMPILER__Image_processing_u
 #############################################
 # Link the executable Image_processing.exe
 
-build Image_processing.exe: C_EXECUTABLE_LINKER__Image_processing_Debug CMakeFiles/Image_processing.dir/bmp8.c.obj CMakeFiles/Image_processing.dir/main.c.obj
+build Image_processing.exe: C_EXECUTABLE_LINKER__Image_processing_Debug CMakeFiles/Image_processing.dir/bmp8.c.obj CMakeFiles/Image_processing.dir/t_bmp24.c.obj CMakeFiles/Image_processing.dir/main.c.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\Image_processing.dir

@@ -33,17 +33,6 @@ typedef unsigned short uint16_t;
 typedef unsigned int uint32_t;
 typedef int int32_t;
 
-
-typedef struct {
-    t_bmp_header header;
-    t_bmp_info header_info;
-    int width;
-    int height;
-    int colorDepth;
-    t_pixel **data;
-} t_bmp24;
-
-
 typedef struct {
     uint16_t type;
     uint32_t size;
@@ -72,6 +61,15 @@ typedef struct {
     uint8_t blue;
 } t_pixel;
 
+typedef struct {
+    t_bmp_header header;
+    t_bmp_info header_info;
+    int width;
+    int height;
+    int colorDepth;
+    t_pixel **data;
+} t_bmp24;
+
 
 // 2.3 Fonctions d’allocation et de libération de mémoire
 t_pixel ** bmp24_allocateDataPixels (int width, int height);
@@ -81,18 +79,18 @@ void bmp24_free (t_bmp24 * img);
 
 // 2.4 Fonctionnalités : Lecture et écriture d’image 24 bits
 t_bmp24 * bmp24_loadImage (const char * filename);
-void bmp24_saveImage (t_bmp * img, const char * filename);
+void bmp24_saveImage (t_bmp24 * img, const char * filename);
 
-void bmp24_readPixelValue (t_bmp * image, int x, int y, FILE * file);
-void bmp24_readPixelData (t_bmp * image, FILE * file);
+void bmp24_readPixelValue (t_bmp24 * image, int x, int y, FILE * file);
+void bmp24_readPixelData (t_bmp24 * image, FILE * file);
 
-void bmp24_writePixelValue (t_bmp * image, int x, int y, FILE * file);
-void bmp24_writePixelData (t_bmp * image, FILE * file);
+void bmp24_writePixelValue (t_bmp24 * image, int x, int y, FILE * file);
+void bmp24_writePixelData (t_bmp24 * image, FILE * file);
 
 // 2.5 Fonctionnalités : Traitement d’image 24 bits
-void bmp24_negative (t_bmp * img);
-void bmp24_grayscale (t_bmp * img);
-void bmp24_brightness (t_bmp * img, int value);
+void bmp24_negative (t_bmp24 * img);
+void bmp24_grayscale (t_bmp24 * img);
+void bmp24_brightness (t_bmp24 * img, int value);
 
 // 2.6 Fonctionnalités : Filtres de convolution
 t_pixel bmp24_convolution (t_bmp24 * img, int x, int y, float ** kernel, int kernelSize);

@@ -8,4 +8,7 @@ include_directories(.)
 add_executable(Image_processing
     bmp8.c
     bmp8.h
-    main.c)
+    t_bmp24.h
+    t_bmp24.c
+    main.c
+)
