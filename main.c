@@ -10,17 +10,25 @@ void menu_choix3 (t_bmp8 * img) {
         switch (choix) {
             case 1:
                 bmp8_negative(img);
-                break;
+            break;
             case 2:
                 int value;
-                printf("Veuillez choisir une valeur : ");
-                scanf("%d ", &value);
-                bmp8_brightness(img, value);
-                break;
+            printf("Veuillez choisir une valeur : ");
+            scanf("%d ", &value);
+            bmp8_brightness(img, value);
+            break;
             case 3:
                 bmp8_threshold(img, 128);
-                break;
+            break;
             case 4:
+                float **kernel = malloc(3 * sizeof(float*));
+                for (int i = 0; i < 3; i++) {
+                    kernel[i] = malloc(3 * sizeof(float));
+                    for (int j = 0; j < 3; j++) {
+                        kernel[i][j] = 1.0 / 9.0; // Flou simple
+                    }
+                }
+                    bmp8_applyFilter(img, kernel, 9);
                 break;
             case 5:
                 break;

@@ -30,6 +30,7 @@ t_bmp8 * bmp8_loadImage(const char * filename){
   img->height = *(unsigned int*)&img->header[22];
   img->colorDepth = *(unsigned int*)&img->header[28];
   img->dataSize = img->width * img->height; //  *(unsigned int*)&img->header[34];
+  img->pixels = malloc(img->height * sizeof(unsigned char*));
   // Vérifie bien image 8 bits
   if (img->colorDepth != 8) {
     printf("Erreur,pas image en 8 bits.\n");
@@ -49,8 +50,12 @@ t_bmp8 * bmp8_loadImage(const char * filename){
   //Lecture des données de l'image
   fseek(file, img->offset, SEEK_SET);
   long blocs = fread(img->data, sizeof(unsigned char), img->dataSize, file);
-//printf("blocs lus : %d\n",blocs );
-//printf("image data : %s\n",img->data );
+  //printf("blocs lus : %d\n",blocs );
+  //printf("image data : %s\n",img->data );
+
+  for (int i = 0; i < img->height; i++) {
+    img->pixels[i] = malloc(img->width * sizeof(unsigned char));
+  }
 
   printf("Image %s chargée avec succès !\n",filename);
   //Ferme le fichier et retourne l'image
@@ -138,8 +143,44 @@ void bmp8_threshold(t_bmp8 * img, int threshold){
   }
 }
 
-void bmp8_applyFilter(t_bmp8 * img, float ** kernel, int kernelSize) {
-  if (!img || !img->data) {
-    return;
+void bmp8_applyFilter(t_bmp8 * img, float ** kernel, int kernelSize){
+  int width = img->width;
+  int height = img->height;
+  int offset = kernelSize / 2;
+
+  // Allouer de la mémoire pour une copie de l'image originale
+  unsigned char **original = malloc(height * sizeof(unsigned char *));
+  for (int i = 0; i < height; i++) {
+    original[i] = malloc(width * sizeof(unsigned char));
+    for (int j = 0; j < width; j++) {
+      original[i][j] = img->pixels[i][j]; // Copie des pixels
+    }
   }
+  printf("dans fonction 2");
+
+  // Appliquer le filtre (on ne traite pas les bords)
+  for (int y = offset; y < height - offset; y++) {
+    for (int x = offset; x < width - offset; x++) {
+      float sum = 0.0f;
+      for (int i = -offset; i <= offset; i++) {
+        for (int j = -offset; j <= offset; j++) {
+          printf("1");
+          sum += original[y + i][x + j] * kernel[i + offset][j + offset];
+          printf("2");
+        }
+      }
+
+      // Entre 0 et 255
+      if (sum < 0) sum = 0;
+      if (sum > 255) sum = 255;
+
+      img->pixels[y][x] = (unsigned char)sum;
+    }
+  }
+
+  // Libération de la mémoire temporaire
+  for (int i = 0; i < height; i++) {
+    free(original[i]);
+  }
+  free(original);
 }
