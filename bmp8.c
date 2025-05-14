@@ -48,11 +48,8 @@ t_bmp8 * bmp8_loadImage(const char * filename){
     fclose(file);
     return NULL;
   }
-
   //Lecture des données de l'image
   fseek(file, img->offset, SEEK_SET);
-  long blocs = fread(img->data, sizeof(unsigned char), img->dataSize, file);
-
   printf("Image %s chargée avec succès !\n",filename);
   //Ferme le fichier et retourne l'image
   fclose(file);
