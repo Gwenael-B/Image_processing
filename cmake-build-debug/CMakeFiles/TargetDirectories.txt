@@ -1,3 +1,0 @@
-C:/Users/clare/CLionProjects/Image_processing/cmake-build-debug/CMakeFiles/Image_processing.dir
-C:/Users/clare/CLionProjects/Image_processing/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/Users/clare/CLionProjects/Image_processing/cmake-build-debug/CMakeFiles/rebuild_cache.dir
