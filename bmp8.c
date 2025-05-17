@@ -153,7 +153,7 @@ void bmp8_applyFilter(t_bmp8 * img, float ** kernel, int kernelSize){
     }
   }
   // Appliquer le filtre (on ne traite pas les bords)
-//  printf("=========== Debut image convertie ===============\n");
+  //  printf("=========== Debut image convertie ===============\n");
   for (int y = offset; y < height - offset; y++) {
     for (int x = offset; x < width - offset; x++) {
       float sum = 0.0f;
@@ -177,4 +177,42 @@ void bmp8_applyFilter(t_bmp8 * img, float ** kernel, int kernelSize){
     free(original[i]);
   }
   free(original);
+}
+
+void bmp8_equalize(t_bmp8 * img, unsigned int * hist_eq) {
+  for (int i =0 ;i< img->dataSize;i++){
+    img->data[i] = hist_eq[img->data[i]];
+  }
+}
+
+unsigned int * bmp8_computeHistogram(t_bmp8 * img) {
+  static unsigned int hist [256] = {0};
+  for (int i =0 ;i< img->dataSize;i++) {
+    hist[img->data[i]]++;
+  }
+  return hist;
+}
+
+unsigned int * bmp8_computeCDF(unsigned int * hist) {
+  static unsigned int hist_eq[256] = {0};
+  static unsigned int cdf[256] = {0};
+  cdf[0]=hist[0];
+  unsigned int n = hist[0];
+  unsigned int cdfMin = UINT_MAX;
+  if (hist[0]>0) {
+    cdfMin = hist[0];
+  }
+  for (int i =1 ;i < 256;i++) {
+    if (hist[i]<cdfMin && hist[i]>0) {
+      cdfMin = hist[i];
+    }
+    cdf[i]=cdf[i-1]+hist[i];
+    n= n + hist[i];
+  }
+  for (int i =0 ;i < 256;i++) {
+    if (hist[i]!=0) {
+      hist_eq[i]=(unsigned int)round((cdf[i]-cdfMin) * (255.0f / (n -cdfMin) ));
+    }
+  }
+  return hist_eq;
 }
