@@ -4,12 +4,21 @@
 
 t_pixel ** bmp24_allocateDataPixels (int width, int height) {
     t_pixel** pixels = malloc(height * sizeof(t_pixel*));
-    for (int i = 0; i < height; i++) {
-        pixels[i] = malloc(width * sizeof(t_pixel));
-    }
     if (!pixels) {
         printf("Failed to allocate memory for pixels\n");
         return  NULL;
+    }
+    for (int i = 0; i < height; i++) {
+        pixels[i] = malloc(width * sizeof(t_pixel));
+        if (!pixels[i]) {
+            printf("Erreur lors de l'allocation de la mémoire pour les pixels.");
+            for (int j = 0; j < i; j++) {
+                free(pixels[j]);
+            }
+            free(pixels);
+            return  NULL;
+        }
+
     }
     return pixels;
 }
@@ -23,12 +32,17 @@ void bmp24_freeDataPixels (t_pixel ** pixels, int height) {
 
 t_bmp24 * bmp24_allocate (int width, int height, int colorDepth) {
     t_bmp24 *img = (t_bmp24*) malloc(sizeof(t_bmp24));
-    img->data = (t_pixel **) bmp24_allocateDataPixels(width, height);
+    if (!img) {
+        printf("Erreur lors de l'allocation de la mémoire pour l'image.");
+        return  NULL;
+    }
+    img->data = bmp24_allocateDataPixels(width, height);
     img->width = width;
     img->height = height;
     img->colorDepth = colorDepth;
-    img->header=* (t_bmp_header*) &img->header;
-    img->header_info=*(t_bmp_info*) &img->header_info;
+    img->header.type = BMP_TYPE;
+    img->header.size = HEADER_SIZE + INFO_SIZE + width * height * 3;
+    img->header.offset = HEADER_SIZE + INFO_SIZE;
     return img;
 }
 
@@ -73,8 +87,13 @@ void bmp24_readPixelValue (t_bmp24 * image, int x, int y, FILE * file) {
         printf("Erreur : le nombre de pixel ne correspond pas");
         return;
     }
-    t_pixel pixel;
-    
+    unsigned int position = image->header.offset + (image->height -1 -y)* image->width * 3;
+    uint8_t bgr[3];
+    fseek(file, position, SEEK_SET);
+    fread(bgr, sizeof(uint8_t), 3, file);
+    image->data[y][x].blue = bgr[0];
+    image->data[y][x].green = bgr[1];
+    image->data[y][x].red = bgr[2];
 }
 
 void bmp24_readPixelData (t_bmp24 * image, FILE * file) {
@@ -86,7 +105,10 @@ void bmp24_readPixelData (t_bmp24 * image, FILE * file) {
 }
 
 void bmp24_writePixelValue (t_bmp24 * image, int x, int y, FILE * file) {
-
+    unsigned int position = image->header.offset + (image->height -1 -y)* image->width * 3;
+    uint8_t bgr[3] = {image->data[y][x].blue, image->data[y][x].green, image->data[y][x].red};
+    fseek(file, position, SEEK_SET);
+    fwrite(bgr, sizeof(uint8_t), 3, file);
 }
 
 void bmp24_writePixelData (t_bmp24 * image, FILE * file) {
