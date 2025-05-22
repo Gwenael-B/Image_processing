@@ -11,6 +11,7 @@
 // Constantes pour les offsets des champs de l'en-tête BMP
 #define BITMAP_MAGIC 0x00 // offset 0
 #define BITMAP_SIZE 0x02 // offset 2
+#define BITMAP_RESERVED 0x06 // offset 4
 #define BITMAP_OFFSET 0x0A // offset 10
 #define BITMAP_WIDTH 0x12 // offset 18
 #define BITMAP_HEIGHT 0x16 // offset 22
@@ -33,11 +34,12 @@ typedef unsigned short uint16_t;
 typedef unsigned int uint32_t;
 typedef int int32_t;
 
+
+#pragma pack(1) //ajout pour ignorer le padding car la structure fait 14 bits et n'est pas un multiple de 8
 typedef struct {
     uint16_t type;
     uint32_t size;
-    uint16_t reserved1;
-    uint16_t reserved2;
+    uint32_t reserved;
     uint32_t offset;
 } t_bmp_header;
 
@@ -56,10 +58,16 @@ typedef struct {
 } t_bmp_info;
 
 typedef struct {
-    uint8_t red;
-    uint8_t green;
     uint8_t blue;
+    uint8_t green;
+    uint8_t red;
 } t_pixel;
+
+typedef struct {
+    uint8_t y;
+    uint8_t u;
+    uint8_t v;
+} t_pixel_yuv;
 
 typedef struct {
     t_bmp_header header;
@@ -68,6 +76,7 @@ typedef struct {
     int height;
     int colorDepth;
     t_pixel **data;
+    t_pixel_yuv **dataYUV;
 } t_bmp24;
 
 
@@ -93,8 +102,18 @@ void bmp24_grayscale (t_bmp24 * img);
 void bmp24_brightness (t_bmp24 * img, int value);
 
 // 2.6 Fonctionnalités : Filtres de convolution
+//void bmp24_applyFilter(t_bmp24 * img, float ** kernel, int kernelSize);
 t_pixel bmp24_convolution (t_bmp24 * img, int x, int y, float ** kernel, int kernelSize);
 
+void bmp24_equalize(t_bmp24 * img,const unsigned int * hist_eq);
 
+unsigned int * bmp24_computeHistogram(t_bmp24 * img);
+unsigned int * bmp24_computeCDF(const unsigned int * hist);
+
+void bmp24_boxBlur(t_bmp24 * img);
+void bmp24_gaussianBlur(t_bmp24 * img); //Appliquer un filtre de flou gaussien à l’image.
+void bmp24_outline(t_bmp24 * img); // Appliquer un filtre de détection de contours à l’image.
+void bmp24_emboss(t_bmp24 * img); // Appliquer un filtre de relief à l’image.
+void bmp24_sharpen(t_bmp24 * img); //
 
 #endif //T_BMP24_H
