@@ -48,11 +48,10 @@ t_bmp8 * bmp8_loadImage(const char * filename){
     fclose(file);
     return NULL;
   }
+
   //Lecture des données de l'image
   fseek(file, img->offset, SEEK_SET);
-
-  fread(img->data, sizeof(unsigned char), img->dataSize, file);
-
+  long blocs = fread(img->data, sizeof(unsigned char), img->dataSize, file);
   printf("Image %s chargée avec succès !\n",filename);
   //Ferme le fichier et retourne l'image
   fclose(file);
@@ -153,7 +152,6 @@ void bmp8_applyFilter(t_bmp8 * img, float ** kernel, int kernelSize){
     }
   }
   // Appliquer le filtre (on ne traite pas les bords)
-  //  printf("=========== Debut image convertie ===============\n");
   for (int y = offset; y < height - offset; y++) {
     for (int x = offset; x < width - offset; x++) {
       float sum = 0.0f;
@@ -170,7 +168,7 @@ void bmp8_applyFilter(t_bmp8 * img, float ** kernel, int kernelSize){
       img->data[(y*img->height)+x] = (unsigned char)sum;
     }
   }
-  //printf("=========== Fin image convertie ===============\n");
+
 
   // Libération de la mémoire temporaire
   for (int i = 0; i < height; i++) {
@@ -193,6 +191,7 @@ unsigned int * bmp8_computeHistogram(t_bmp8 * img) {
   return hist;
 }
 
+
 unsigned int * bmp8_computeCDF(unsigned int * hist) {
   static unsigned int hist_eq[256] = {0};
   static unsigned int cdf[256] = {0};
@@ -202,12 +201,13 @@ unsigned int * bmp8_computeCDF(unsigned int * hist) {
   if (hist[0]>0) {
     cdfMin = hist[0];
   }
+
   for (int i =1 ;i < 256;i++) {
-    if (hist[i]<cdfMin && hist[i]>0) {
-      cdfMin = hist[i];
-    }
-    cdf[i]=cdf[i-1]+hist[i];
-    n= n + hist[i];
+      if (hist[i]<cdfMin && hist[i]>0) {
+        cdfMin = hist[i];
+      }
+      cdf[i]=cdf[i-1]+hist[i];
+      n= n + hist[i];
   }
   for (int i =0 ;i < 256;i++) {
     if (hist[i]!=0) {

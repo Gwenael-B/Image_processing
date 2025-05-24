@@ -3,16 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void sanitize_fielname(char s[]) {
-    int len=strlen(s);
-    int i;
-
-    i=len-1;
-    while (i>=0 && (s[i])) {
-        s[i]='\0';
-        i--;
-    }
-}
+t_bmp24 * img24;
+t_bmp8 * img;
 
 void menu_choix3 (t_bmp8 * img) {
     int choix = 0;
@@ -28,7 +20,7 @@ void menu_choix3 (t_bmp8 * img) {
             case 2:
                 int value;
             printf("Veuillez choisir une valeur : ");
-            scanf("%d ", &value);
+            scanf(" %d", &value);
             bmp8_brightness(img, value);
             break;
             case 3:
@@ -115,7 +107,7 @@ void menu_choix3 (t_bmp8 * img) {
 void menu_choix3_24 (t_bmp24 * img) {
     int choix = 0;
     while (choix ==0) {
-        printf("Veuillez choisir un filtre :\n 1. Négatif\n 2. Luminosité\n 3. valeurs de gris\n 4. Flou\n 5. Flou gaussien\n 6. Netteté\n 7. Contours\n 8. Relief\n 9. Retourner au menu précédent\nVotre choix :");
+        printf("Veuillez choisir un filtre :\n 1. Négatif\n 2. Luminosité\n 3. valeurs de gris\n 4. Flou\n 5. Flou gaussien\n 6. Contours\n 7. Relief\n 8. Netteté\n 9. Retourner au menu précédent\nVotre choix : ");
         scanf("%d", &choix);
         switch (choix) {
             case 1:
@@ -124,7 +116,7 @@ void menu_choix3_24 (t_bmp24 * img) {
             case 2:
                 int value;
                 printf("Veuillez choisir une valeur : ");
-                scanf("%1d ", &value);
+                scanf(" %d", &value);
                 bmp24_brightness(img, value);
                 break;
             case 3:
@@ -137,13 +129,13 @@ void menu_choix3_24 (t_bmp24 * img) {
                 bmp24_gaussianBlur(img);
                 break;
             case 6:
-                bmp24_sharpen(img);
-                break;
-            case 7:
                 bmp24_outline(img);
                 break;
-            case 8:
+            case 7:
                 bmp24_emboss(img);
+                break;
+            case 8:
+                bmp24_sharpen(img);
                 break;
             case 9:
                 return;
@@ -154,18 +146,15 @@ void menu_choix3_24 (t_bmp24 * img) {
 }
 
 void menu_bmp8() {
-    t_bmp8 * img;
     int choix;
     char chemin[255];
     while (1==1) {
-        printf("\nVeuillez choisir une option :\n  1. Ouvrir une image\n  2. Sauvegarder une image\n  3. Appliquer un filtre\n  4. Afficher les informations de l'image 5. Egalisation par histogramme\n  6. Quitter\n Votre choix : ");
+        printf("\nVeuillez choisir une option :\n  1. Ouvrir une image\n  2. Sauvegarder une image\n  3. Appliquer un filtre\n  4. Afficher les informations de l'image\n  5. Egalisation par histogramme\n  6. Quitter\n Votre choix : ");
         scanf("%d", &choix);
         switch (choix) {
             case 1:
                 printf("Chemin du fichier : ");
-                scanf("%256s", chemin); //  on limite la taille de l'input à 256 caractères
-                chemin[strcspn(chemin, "\n")] = 0;
-                while (getchar() != '\n')
+                scanf(" %256s", chemin); //  on limite la taille de l'input à 256 caractères
 
                 img = bmp8_loadImage(chemin);
                 break;
@@ -194,34 +183,34 @@ void menu_bmp8() {
 }
 
 void menu_bmp24() {
-    t_bmp24 * img;
     int choix;
     char chemin[255];
-    while (1==1) {
+    while (1) {
         printf("\nVeuillez choisir une option :\n  1. Ouvrir une image\n  2. Sauvegarder une image\n  3. Appliquer un filtre\n  4. Afficher les informations de l'image\n  5. Egaliser image\n  6. Quitter\n Votre choix : ");
         scanf("%d", &choix);
         switch (choix) {
             case 1:
                 printf("Chemin du fichier : ");
                 scanf("%s", chemin);
-
-                img = bmp24_loadImage(chemin);
+                if (img24 !=NULL)bmp24_free(img24);
+                img24 = bmp24_loadImage(chemin);
                 break;
             case 2:
                 printf("\nChemin du fichier : ");
                 scanf("%s", chemin);
-                bmp24_saveImage(img,chemin);
+                bmp24_saveImage(img24,chemin);
                 break;
             case 3:
-                menu_choix3_24(img);
+                menu_choix3_24(img24);
                 break;
             case 4:
-                printf("\nImage info :\n   Width : %d\n   height : %d\n   profondeur couleurs : %d bits\n   Resolution X : %d\n   Resolution X : %d\n   compression : %d\n ",img->header_info.width,img->header_info.height,img->header_info.bits,img->header_info.xresolution,img->header_info.yresolution,img->header_info.compression );
+                printf("\nImage info :\n   Width : %d\n   height : %d\n   profondeur couleurs : %d bits\n   Resolution X : %d\n   Resolution X : %d\n   compression : %d\n ", \
+                    img24->header_info.width,img24->header_info.height,img24->header_info.bits,img24->header_info.xresolution,img24->header_info.yresolution,img24->header_info.compression );
                 break;
             case 5:
-                unsigned int* hist = bmp24_computeHistogram(img);
-                unsigned int* hist_eq = bmp24_computeCDF(hist);
-                bmp24_equalize(img,hist_eq);
+                unsigned int* hist = bmp24_computeHistogram(img24);
+                unsigned int* hist_eq =bmp24_computeCDF(hist);
+                bmp24_equalize(img24,hist_eq );
                 break;
              case 6:
                 return;

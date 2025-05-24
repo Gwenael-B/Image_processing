@@ -64,9 +64,9 @@ typedef struct {
 } t_pixel;
 
 typedef struct {
-    uint8_t y;
-    uint8_t u;
-    uint8_t v;
+    float y;
+    float u;
+    float v;
 } t_pixel_yuv;
 
 typedef struct {
@@ -83,7 +83,7 @@ typedef struct {
 // 2.3 Fonctions d’allocation et de libération de mémoire
 t_pixel ** bmp24_allocateDataPixels (int width, int height);
 void bmp24_freeDataPixels (t_pixel ** pixels, int height);
-t_bmp24 * bmp24_allocate (int width, int height, int colorDepth);
+t_bmp24 * bmp24_allocate ( int width, int height, int colorDepth);
 void bmp24_free (t_bmp24 * img);
 
 // 2.4 Fonctionnalités : Lecture et écriture d’image 24 bits
