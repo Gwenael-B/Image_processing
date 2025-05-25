@@ -11,7 +11,7 @@ Il faut maintenant compiler le programme (processus qui transforme le code sourc
 de marteau en haut à droite à côté du symbole de flèche. Une fois la compilation effectué, on peut lancer le programme. Il faut cliquer sur le symbole de flèche en haut 
 à droite ou faire clic droit sur le fichier main.c et cliquer sur run.
 
-### 3. Fonctionnalités implémentées 
+### 3. Fonctionnalités implémentées  
 *Fonctions essentiels :*
 - Ouverture et sauvegarde d'images
 - Affichage des informations de l'image
