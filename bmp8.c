@@ -174,12 +174,14 @@ void bmp8_applyFilter(t_bmp8 * img, float ** kernel, int kernelSize){
   free(original);
 }
 
+//Uniformise la répartition des nuances de gris sur la plage  [0, 255]
 void bmp8_equalize(t_bmp8 * img, unsigned int * hist_eq) {
   for (int i =0 ;i< img->dataSize;i++){
     img->data[i] = hist_eq[img->data[i]];
   }
 }
 
+//Calcul l'histogramme de la répartition des niveaux de gris par valeurs différentes
 unsigned int * bmp8_computeHistogram(t_bmp8 * img) {
   static unsigned int hist [256] = {0};
   for (int i =0 ;i< img->dataSize;i++) {
@@ -188,7 +190,7 @@ unsigned int * bmp8_computeHistogram(t_bmp8 * img) {
   return hist;
 }
 
-
+//Uniformise les niveaux de gris sur toute la plage [0, 255]
 unsigned int * bmp8_computeCDF(unsigned int * hist) {
   static unsigned int hist_eq[256] = {0};
   static unsigned int cdf[256] = {0};

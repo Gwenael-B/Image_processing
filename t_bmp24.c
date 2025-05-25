@@ -224,12 +224,33 @@ void bmp24_brightness (t_bmp24 * img, int value) {
     //La boucle parcourt chaque pixel de l'image et ajoute la valeur de luminosité en vérifiant que la valeur du pixel reste bien entre 0 et 255
     for (int y=0; y<img->height; y++) {
         for (int x=0; x<img->width; x++) {
-            img->data[y][x].red = (img->data[y][x].red + value>255) ? 255 : img->data[y][x].red + value;
-            img->data[y][x].red = (img->data[y][x].red < 0) ? 0 : img->data[y][x].red;
-            img->data[y][x].green = (img->data[y][x].green + value > 255) ? 255 : img->data[y][x].green + value;
-            img->data[y][x].green = (img->data[y][x].green < 0) ? 0 : img->data[y][x].green;
-            img->data[y][x].blue = (img->data[y][x].blue + value > 255) ? 255 : img->data[y][x].blue + value;
-            img->data[y][x].blue = (img->data[y][x].blue < 0) ? 0 : img->data[y][x].blue;
+            if (img->data[y][x].red + value>255) {
+                img->data[y][x].red = 255;
+            }
+            else if (img->data[y][x].red + value<0) {
+                img->data[y][x].red = 0;
+            }
+            else {
+                img->data[y][x].red += value;
+            }
+            if (img->data[y][x].green + value>255) {
+                img->data[y][x].green = 255;
+            }
+            else if (img->data[y][x].green + value<0) {
+                img->data[y][x].green = 0;
+            }
+            else {
+                img->data[y][x].green += value;
+            }
+            if (img->data[y][x].blue + value>255) {
+                img->data[y][x].blue = 255;
+            }
+            else if (img->data[y][x].blue + value<0) {
+                img->data[y][x].blue = 0;
+            }
+            else {
+                img->data[y][x].blue += value;
+            }
         }
     }
 }
@@ -408,6 +429,7 @@ t_pixel convert_YUV_to_RGB(const t_pixel_yuv *pixel) {
     return rgb;
 }
 
+//Uniformise la répartition des couleurs sur la plage  [0, 255]
 void bmp24_equalize(t_bmp24 * img,const unsigned int * hist_eq) {
     for (int y =0 ;y< img->height;y++) {
         for (int x =0 ;x< img->width;x++) {
@@ -419,7 +441,7 @@ void bmp24_equalize(t_bmp24 * img,const unsigned int * hist_eq) {
     }
 }
 
-
+//Calcul l'histogramme de la luminensce : répartition de la luminosité
 unsigned int * bmp24_computeHistogram(t_bmp24 * img) {
     static unsigned int hist [256] = {0};
     for (int y =0 ;y< img->height;y++) {
@@ -433,7 +455,7 @@ unsigned int * bmp24_computeHistogram(t_bmp24 * img) {
     return hist;
 }
 
-
+//Uniformise la luminosité sur toute la plage [0, 255]
 unsigned int * bmp24_computeCDF(const unsigned int * hist) {
     static unsigned int hist_eq[256] = {0};
     static unsigned int cdf[256] = {0};
