@@ -1,3 +1,8 @@
+//Ce fichier contient toutes les fonctions nécessaires pour ouvrir, sauvegarder et modifier les images en couleur
+//L'ensemble des fonctions est utilisé dans le main
+//Créé par Gwenaël et Clarence
+
+
 #include "t_bmp24.h"
 #include <math.h>
 

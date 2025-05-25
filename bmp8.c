@@ -1,3 +1,7 @@
+//Ce fichier contient toutes les fonctions nécessaires pour ouvrir, sauvegarder et modifier les images en noir et blanc
+//L'ensemble des fonctions est utilisé dans le main
+//Créé par Gwenaël et Clarence
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "bmp8.h"

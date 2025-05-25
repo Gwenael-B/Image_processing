@@ -1,3 +1,6 @@
+//Ce fichier contient tous les prototypes des fonctions ainsi que les structures pour les images en noir et blanc
+//Créé par Gwenaël et Clarence
+
 typedef struct {
     unsigned char header[54];
     unsigned char colorTable[1024];

@@ -1,6 +1,6 @@
-//
-// Created by gwena on 02/05/2025.
-//
+//Ce fichier contient toutes les constantes servant aux fonctions pour les images en couleur
+//Il contient également tous les prototypes des fonctions ainsi que les structures pour les images en couleurs
+//Créé par Gwenaël et Clarence
 
 #ifndef T_BMP24_H
 #define T_BMP24_H

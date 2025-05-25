@@ -1,3 +1,7 @@
+//Ce fichier contient tous les menus permettant à l'utilisateur d'utiliser le programme
+//Il appelle également toutes les autres fonctions dans les menus pour permettre les modifications des images
+//Créé par Gwenaël et Clarence
+
 #include "bmp8.h"
 #include "t_bmp24.h"
 #include <stdio.h>
