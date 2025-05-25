@@ -21,10 +21,8 @@ t_bmp8 * bmp8_loadImage(const char * filename){
 
   //Lecture header
   fread(img->header, sizeof(unsigned char), 54, file);
-
   //Lecture table de couleurs
   fread(img->colorTable, sizeof(unsigned char), 1024, file);
-
   //Extraire informations du header
   img->offset = *(unsigned int*)&img->header[10];
   img->width = *(unsigned int*)&img->header[18];
@@ -32,7 +30,7 @@ t_bmp8 * bmp8_loadImage(const char * filename){
   img->colorDepth = *(unsigned int*)&img->header[28];
   img->dataSize = img->width * img->height; //  *(unsigned int*)&img->header[34];
 
-  // Vérifie bien image 8 bits
+  // Vérifie si la profondeur de couleur est sur 8 bits
   if (img->colorDepth != 8) {
     printf("Erreur,pas image en 8 bits.\n");
     free(img);
@@ -51,7 +49,7 @@ t_bmp8 * bmp8_loadImage(const char * filename){
 
   //Lecture des données de l'image
   fseek(file, img->offset, SEEK_SET);
-  long blocs = fread(img->data, sizeof(unsigned char), img->dataSize, file);
+  fread(img->data, sizeof(unsigned char), img->dataSize, file);
   printf("Image %s chargée avec succès !\n",filename);
   //Ferme le fichier et retourne l'image
   fclose(file);
@@ -99,12 +97,13 @@ void bmp8_printInfo(t_bmp8 * img){
   printf("\nImage info :\n    Width : %d\n    Height : %d\n    Color Depth : %d\n    Date Size : %d\n", img->width, img->height, img->colorDepth, img->dataSize);
 }
 
-//La fonction change l'image en négatif : echange les couleurs
+//La fonction change l'image en négatif : échange les couleurs
 void bmp8_negative(t_bmp8 * img){
   if (!img || !img->data){
     printf(" L'image est vide, impossible de faire son negatif.\n");
     return;
   }
+  //La boucle parcourt chaque pixel de l'image et inverse leur couleur
   for (unsigned int i = 0; i < img->dataSize; i++){
     img->data[i] = 255 - img->data[i];
   }
@@ -114,16 +113,14 @@ void bmp8_negative(t_bmp8 * img){
 void bmp8_brightness(t_bmp8 * img, int value){
   if (!img || !img->data)
     return;
-
+  //La boucle parcourt chaque pixel de l'image et ajoute la valeur de luminosité à la valeur du pixel
   for (unsigned int i = 0; i < img->dataSize; i++){
     int pixel = img->data[i] + value;
-
-    // Clamping (forcage dans [0, 255])
+    //On vérifie que les valeurs des pixels restent bien entre 0 et 255
     if (pixel > 255)
       pixel = 255;
     if (pixel < 0)
       pixel = 0;
-
     img->data[i] = (unsigned char)pixel;
   }
 }
@@ -132,7 +129,7 @@ void bmp8_brightness(t_bmp8 * img, int value){
 void bmp8_threshold(t_bmp8 * img, int threshold){
   if (!img || !img->data)
     return;
-
+  //La boucle parcourt chaque valeur des pixels de l'image, si la valeur est supérieur à celle saisie la valeur du pixel est mise à 255 sinon 0
   for (unsigned int i = 0; i < img->dataSize; i++){
     img->data[i] = (img->data[i] >= threshold) ? 255 : 0;
   }

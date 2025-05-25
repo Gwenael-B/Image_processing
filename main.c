@@ -6,10 +6,10 @@
 t_bmp24 * img24;
 t_bmp8 * img;
 
+//La fonction gère le menu des filtres pour les images en noir et blanc
 void menu_choix3 (t_bmp8 * img) {
     int choix = 0;
     float **kernel = malloc(3 * sizeof(float*));
-
     while (choix ==0) {
         printf("Veuillez choisir un filtre :\n 1. Négatif\n 2. Luminosité\n 3. Binarisation\n 4. Flou\n 5. Flou gaussien\n 6. Netteté\n 7. Contours\n 8. Relief\n 9. Retourner au menu précédent\nVotre choix :");
         scanf("%d", &choix);
@@ -104,6 +104,7 @@ void menu_choix3 (t_bmp8 * img) {
     free(kernel);
 }
 
+//La fonction gère le menu des filtres pour les images en couleurs
 void menu_choix3_24 (t_bmp24 * img) {
     int choix = 0;
     while (choix ==0) {
@@ -145,6 +146,7 @@ void menu_choix3_24 (t_bmp24 * img) {
     }
 }
 
+//La fonction gère le menu des images en noir et blanc
 void menu_bmp8() {
     int choix;
     char chemin[255];
@@ -155,7 +157,6 @@ void menu_bmp8() {
             case 1:
                 printf("Chemin du fichier : ");
                 scanf(" %256s", chemin); //  on limite la taille de l'input à 256 caractères
-
                 img = bmp8_loadImage(chemin);
                 break;
             case 2:
@@ -182,6 +183,7 @@ void menu_bmp8() {
     }
 }
 
+//La fonction gére le menu des images en couleurs
 void menu_bmp24() {
     int choix;
     char chemin[255];
@@ -237,4 +239,3 @@ int main(void) {
                 printf("Erreur, veuillez entrer un nombre correct.\n");
         }
    }
-

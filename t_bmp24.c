@@ -1,10 +1,9 @@
 #include "t_bmp24.h"
 #include <math.h>
 
-// 2.3 Fonctions d’allocation et de libération de mémoire
-
-t_pixel ** bmp24_allocateDataPixels (const int width,const int height) {
-    t_pixel** pixels = malloc(height * sizeof(t_pixel*));
+//Fonction qui alloue dynamiquement de la mémoire pour une matrice de t_pixel de taille witdh × height et renvoye l’adresse allouée
+t_pixel **bmp24_allocateDataPixels(const int width, const int height) {
+    t_pixel **pixels = malloc(height * sizeof(t_pixel*));
     for (int i = 0; i < height; i++) {
         pixels[i] = malloc(width * sizeof(t_pixel));
     }
@@ -13,9 +12,9 @@ t_pixel ** bmp24_allocateDataPixels (const int width,const int height) {
         return  NULL;
     }
     return pixels;
-
 }
 
+//Fonction qui libére toute la mémoire allouée pour la matrice de t_pixel pixels
 void bmp24_freeDataPixels (t_pixel ** pixels,const int height) {
     if (pixels!=NULL) {
         for (int i = 0; i < height; i++) {
@@ -25,8 +24,10 @@ void bmp24_freeDataPixels (t_pixel ** pixels,const int height) {
     }
 }
 
+//Fonction qui alloue dynamiquement de la mémoire pour une image t_bmp24
 t_bmp24 * bmp24_allocate (const int width,const int height,const int colorDepth) {
     t_bmp24 *img = (t_bmp24*) malloc(sizeof(t_bmp24));
+    //Utilise la fonction bmp24_allocateDataPixels pour allouer la mémoire des pixels
     img->data = (t_pixel **) bmp24_allocateDataPixels(width, height);
     img->dataYUV = malloc(height * sizeof(t_pixel_yuv*));
     for (int i = 0; i < height; i++) {
@@ -40,12 +41,11 @@ t_bmp24 * bmp24_allocate (const int width,const int height,const int colorDepth)
     return img;
 }
 
+//Fonction qui libére toute la mémoire alloué pour l'image img reçue en paramètre
 void bmp24_free (t_bmp24 * img) {
     bmp24_freeDataPixels(img->data, img->height);
     free(img);
 }
-
-// 2.4 Fonctionnalités : Lecture et écriture d’image 24 bits
 
 /*
 * @brief Positionne le curseur de fichier à la position position dans le fichier file,
@@ -76,13 +76,17 @@ void file_rawWrite (uint32_t position, void * buffer, uint32_t size, size_t n, F
     fwrite(buffer, size, n, file);
 }
 
+//Fonction qui lit la valeur du pixel avec ses coordonnées et qui l'écrit dans les datas de l'image
 void bmp24_readPixelValue (t_bmp24 * image, int x, int y, FILE * file) {
-    //calcul position
+    //calcul de la position du pixel
     fseek(file, image->header.offset+((((image->header_info.height-y)*image->header_info.width)+x)*3), SEEK_SET);
+    //Ecrit la valeur du pixel dans la matrice de pixel
     fread(&image->data[y][x], sizeof(t_pixel), 1, file);
-
 }
+
+//Fonction qui lit l'intégralité des valeurs des pixels et les enregistre dans la matrice de pixel
 void bmp24_readPixelData (t_bmp24 * image, FILE * file) {
+    //Boucle qui parcourt chaque pixel de pixel de l'image et envoie ses coordonnées à la fonction bmp24_readPixelValue
     for (int y = image->height-1; y >=0;  y--) {
         for (int x = 0; x < image->width;  x++) {
             bmp24_readPixelValue(image,x,y,file);
@@ -90,11 +94,13 @@ void bmp24_readPixelData (t_bmp24 * image, FILE * file) {
     }
 }
 
+//Fonction qui écrit la valeur d'un pixel à une position donnée dans le fichier file
 void bmp24_writePixelValue (t_bmp24 * image, int x, int y, FILE * file) {
     fseek(file, image->header.offset+((((image->header_info.height-y)*image->header_info.width)+x)*3), SEEK_SET);
     fwrite(&image->data[y][x], sizeof(t_pixel), 1, file);
 }
 
+//Fonction qui écrit l'intégralité des valeurs des pixels de image et l'enregistre dans le fichier file
 void bmp24_writePixelData (t_bmp24 * image, FILE * file) {
     fseek(file, image->header.offset,SEEK_SET);
     for (int y = image->height-1; y >=0;  y--) {
@@ -104,9 +110,9 @@ void bmp24_writePixelData (t_bmp24 * image, FILE * file) {
     }
 }
 
+//Fonction qui charge l'image
 t_bmp24 * bmp24_loadImage (const char * filename) {
-
-    //réinitialise la structure image
+    //Réinitialise la structure image
     FILE *file = fopen(filename, "rb");
     if(!file){
         printf("Erreur, l'image sélectionnée n'est pas correcte.\n");
@@ -138,21 +144,22 @@ t_bmp24 * bmp24_loadImage (const char * filename) {
     //Lit le header info de l'image
     file_rawRead(HEADER_SIZE, header_info, INFO_SIZE, 1, file);
 
-    //alloue la mémoiree pour l'image
+    //Alloue la mémoiree pour l'image
     t_bmp24* img = bmp24_allocate(header_info->width,header_info->height,header_info->bits);
 
-    //iniitialise la structure image
+    //Initialise la structure image
     img->header=*(t_bmp_header *) header;
     img->header_info=*(t_bmp_info *) header_info;
     img->height=img->header_info.height;
     img->width=img->header_info.width;
 
-    //lit le contenu de l'image
+    //Lit le contenu de l'image et le charge
     bmp24_readPixelData(img,file);
     fclose(file);
     return img;
 }
 
+//Fonction qui sauvegarde l'image dans le chemin filename
 void bmp24_saveImage ( t_bmp24* img, const char * filename) {
     FILE *file = fopen(filename, "wb");//Ecrit en binaire
     if (!file) {
@@ -175,15 +182,13 @@ void bmp24_saveImage ( t_bmp24* img, const char * filename) {
 
 }
 
-
-
-//2.5 Fonctionnalités : Traitement d’image 24 bits
-
+//La fonction inverse les couleurs de l'image
 void bmp24_negative (t_bmp24 * img) {
     if (!img || !img->data){
         printf(" L'image est vide, impossible de faire son negatif.\n");
         return;
     }
+    //La boucle parcourt chaque pixel de l'image et inverse sa couleur
     for (int y=0; y<img->height; y++) {
         for (int x=0; x<img->width; x++) {
             img->data[y][x].red = 255 - img->data[y][x].red;
@@ -193,11 +198,13 @@ void bmp24_negative (t_bmp24 * img) {
     }
 }
 
+//La fonction convertit l'image en niveaux de gris
 void bmp24_grayscale (t_bmp24 * img) {
     if (!img || !img->data){
         printf(" L'image est vide, impossible de faire sa conversion en niveaux de gris.\n");
         return;
     }
+    //La boucle parcourt chaque pixel de l'image, calcule la valeur moyenne des trois cannaux de couleur et affecte cette valeur à chaque canal
     for (int y=0; y<img->height; y++) {
         for (int x=0; x<img->width; x++) {
             int moyenne = (img->data[y][x].red + img->data[y][x].green + img->data[y][x].blue)/3;
@@ -208,16 +215,21 @@ void bmp24_grayscale (t_bmp24 * img) {
     }
 }
 
+//La fonction ajuste la luminosité de l'image en fonction de la valeur value
 void bmp24_brightness (t_bmp24 * img, int value) {
     if (!img || !img->data){
         printf(" L'image est vide, impossible d'ajuster le niveau de luminosité.\n");
         return;
     }
+    //La boucle parcourt chaque pixel de l'image et ajoute la valeur de luminosité en vérifiant que la valeur du pixel reste bien entre 0 et 255
     for (int y=0; y<img->height; y++) {
         for (int x=0; x<img->width; x++) {
             img->data[y][x].red = (img->data[y][x].red + value>255) ? 255 : img->data[y][x].red + value;
+            img->data[y][x].red = (img->data[y][x].red < 0) ? 0 : img->data[y][x].red;
             img->data[y][x].green = (img->data[y][x].green + value > 255) ? 255 : img->data[y][x].green + value;
+            img->data[y][x].green = (img->data[y][x].green < 0) ? 0 : img->data[y][x].green;
             img->data[y][x].blue = (img->data[y][x].blue + value > 255) ? 255 : img->data[y][x].blue + value;
+            img->data[y][x].blue = (img->data[y][x].blue < 0) ? 0 : img->data[y][x].blue;
         }
     }
 }
